@@ -588,6 +588,61 @@ menjawab pertanyaan ini."
 - Semua refusal (detected via `is_refusal()`) dicatat untuk analisis selanjutnya.
 - Refusal rate menjadi metrik tambahan dalam evaluasi sistem.
 
+### 4.8 Validasi Ilmiah & Keandalan Sistem
+
+#### 4.8.1 Validasi Silang Matematis
+
+Semua skor kumulatif yang dihasilkan oleh program Python dapat dibuktikan dan dibandingkan dengan perhitungan matematis manual di atas kertas:
+
+| Metrik | Formula | Dapat Diverifikasi Manual |
+|--------|---------|---------------------------|
+| **Hit Rate@K** | `Hit@K = (jumlah query dengan relevant doc di top-K) / (total query)` | ✅ Ya — setiap `Hit` boolean per skenario tercatat |
+| **MRR** | `RR = 1/rank_relevan_pertama; MRR = rata-rata(RR)` | ✅ Ya — `First_Relevant_Rank` per skenario tercatat |
+| **Faithfulness** | `faithfulness = klaim_valid / total_klaim` | ✅ Ya — via RAGAS |
+| **Answer Relevance** | `answer_relevance = mean(cosine_similarity)` | ✅ Ya — via RAGAS |
+
+**Prosedur Validasi:**
+1. Ekspor hasil evaluasi ke CSV (`evaluation_results.csv`)
+2. Pilih sampel 3-5 skenario untuk verifikasi manual
+3. Hitung Hit Rate dan MRR secara manual menggunakan `First_Relevant_Rank`
+4. Bandingkan dengan nilai agregat yang dihitung program
+
+**Contoh Validasi Manual:**
+```
+Query 1: Expected pasal 34, Retrieved: [pasal 34 (rank 1), pasal 43 (rank 2)]
+→ Hit = 1, RR = 1/1 = 1.0
+
+Query 2: Expected pasal 56, Retrieved: [pasal 12 (rank 1), pasal 34 (rank 2)]
+→ Hit = 0, RR = 0
+
+Manual MRR = (1.0 + 0) / 2 = 0.5
+Program MRR = 0.5 ✓
+```
+
+#### 4.8.2 Evaluasi Kualitatif Human-in-the-Loop
+
+Peneliti mengambil sampel **15-20% jawaban AI** (≈ **7-10 kasus** dari 50 skenario) untuk dievaluasi kewarasan nalar hukumnya secara manual.
+
+**Metodologi:**
+- **Teknik Sampling**: Purposive sampling dengan kriteria:
+  - Campuran factoid dan open-ended
+  - Rentang pasal berbeda
+  - Variasi tingkat kesulitan
+- **Evaluator**: Peneliti sendiri (legal researcher)
+- **Kriteria Penilaian**:
+  1. Akurasi Hukum (40%) — Sesuai dengan teks KUHP Baru
+  2. Kelengkapan Situsasi (30%) — Menyebut nomor pasal/ayat benar
+  3. Konsistensi Logika (30%) — Tidak ada kontradiksi
+
+**Skala Penilaian:** 1-5 (Sangat Buruk → Sangat Baik)
+
+**Dokumentasi:** Lihat `docs/HUMAN_EVALUATION_TEMPLATE.md`
+
+**Acceptance Criteria:**
+- Minimal 70% skenario sampel mendapat skor ≥ 3.0
+- Minimal 80% jawaban tidak mengandung halusinasi hukum
+- Semua sitasi pasal dapat diverifikasi di `kuhp_bersih.json`
+
 ---
 
 ## 5. SYSTEM CONFIGURATION REFERENCE

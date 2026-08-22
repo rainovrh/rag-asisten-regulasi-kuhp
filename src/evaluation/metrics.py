@@ -27,6 +27,9 @@ def calculate_hit_rate(
 ) -> float:
     """Calculate Hit Rate @ K.
     
+    Formula:
+        Hit@K = (jumlah query yang relevant doc muncul di top-K) / (total query)
+    
     Args:
         results: List of retrieval results per query.
         ground_truths: List of expected document IDs per query.
@@ -62,6 +65,10 @@ def calculate_mrr(
     pasal_mapping: Optional[dict[str, list[str]]] = None,
 ) -> float:
     """Calculate Mean Reciprocal Rank.
+    
+    Formula:
+        RR = 1 / rank_relevan_pertama  (0 jika tidak ditemukan)
+        MRR = rata-rata(RR) across semua query
     
     Args:
         results: List of retrieval results per query.
