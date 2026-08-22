@@ -32,7 +32,7 @@ class OcrCleaner:
         (r'\{II\s*l-irfl\{rf:IrfilNlr\'trltrFlltr\s*', ' '),
         (r'l-irfl\{rf:IrfilNlr\'trltrFlltr', ' '),
         (r'\s*asal\s+\d+O\d+\.{0,2}\s*', ' '),
-        (r'\s*asal\s+\d+\.{0,2}\s*', ' '),
+        (r'\bal\s+\d+\.{0,2}\s*', ' '),
         (r'Ayat\s*\((l)\)', 'Ayat (1)'),
         (r'Ayat(l)', 'Ayat (1)'),
         (r'Ayatl(\d+)l', r'Ayat (\1)'),
@@ -45,6 +45,18 @@ class OcrCleaner:
         (r'daar\s+', ' '),
         (r'\.{4,}', '.'),
         (r'  +', ' '),
+        (r'presiden\s+rei[\'`]*uelik\s+tndonesia', 'republik indonesia'),
+        (r'rei\'?uelik\s+tndonesia', 'republik indonesia'),
+        (r'dalarn', 'dalam'),
+        (r'dalam\s+menetapkan', 'dalam menetapkan'),
+        (r';a\s+lf\*r\'o\s+p', ''),
+        (r'\bf\s*r\'?o\s+p\b', ''),
+        (r'p\s*\(\s*l\s*\)', 'p (1)'),
+        (r'p\s*\(\s*(\d+)\s*\)', r'p (\1)'),
+        (r'[\*;]\s*[a-z]\s*\*', ''),
+        (r'[;:]\s*[a-z]\s+[a-z]\s+[a-z]', ''),
+        (r'\b[;:][a-z]\s*', ' '),
+        (r'\s*[;:]\s*[a-z]\s*', ' '),
     ]
     
     def clean(self, text: str) -> str:

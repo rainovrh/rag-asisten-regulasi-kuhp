@@ -18,13 +18,15 @@ from src.config.constants import (
 
 logger = get_logger(__name__)
 
+_PASAL_PATTERN = re.compile(r'pasal\s+(\d+[a-zA-Z]*)', re.IGNORECASE)
+
 
 @dataclass
 class Chunk:
     """Represents a text chunk with metadata."""
     text: str
     chunk_id: str
-    pasal_ref: Optional[str] = None
+    pasal_refs: Optional[list[str]] = None
     source: str = LEGAL_CORPUS_SOURCE
     char_count: int = 0
     token_count: int = 0
@@ -33,6 +35,39 @@ class Chunk:
         """Calculate derived fields."""
         self.char_count = len(self.text)
         self.token_count = len(self.text.split())
+
+
+class PasalSegmenter:
+    """Segment legal document text by pasal boundaries."""
+    
+    def __init__(self) -> None:
+        """Initialize pasal segmenter."""
+        self._pattern = re.compile(
+            r'(pasal\s+\d+[a-zA-Z]*(?:\s+ayat\s*\(\s*\d+\s*\))?)',
+            re.IGNORECASE,
+        )
+    
+    def segment(self, text: str) -> list[tuple[str, str]]:
+        """Split text into pasal segments.
+        
+        Args:
+            text: Input text.
+        
+        Returns:
+            List of (pasal_id, pasal_text) tuples.
+        """
+        matches = list(self._pattern.finditer(text))
+        segments = []
+        
+        for i, match in enumerate(matches):
+            pasal_id = match.group(1).lower()
+            start = match.start()
+            end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+            pasal_text = text[start:end].strip()
+            segments.append((pasal_id, pasal_text))
+        
+        logger.info(f"Segmented document into {len(segments)} pasal segments")
+        return segments
 
 
 class SemanticChunker:
@@ -54,67 +89,69 @@ class SemanticChunker:
         self._model: Optional[SentenceTransformer] = None
     
     def _load_model(self) -> SentenceTransformer:
-        """Load embedding model (lazy loading).
-        
-        Returns:
-            Loaded SentenceTransformer model.
-        """
+        """Load embedding model (lazy loading)."""
         if self._model is None:
             logger.info(f"Loading embedding model: {self.embedding_model_name}")
             self._model = SentenceTransformer(self.embedding_model_name)
         return self._model
     
-    def chunk(self, text: str) -> list[Chunk]:
-        """Split text into semantic chunks.
+    def chunk_segments(
+        self,
+        segments: list[tuple[str, str]],
+    ) -> list[Chunk]:
+        """Chunk pasal segments using semantic similarity.
         
         Args:
-            text: Input text to chunk.
+            segments: List of (pasal_id, pasal_text) tuples.
+        
+        Returns:
+            List of Chunk objects with pasal metadata.
+        """
+        logger.info(f"Starting semantic chunking with threshold {self.threshold}")
+        chunks = []
+        chunk_index = 0
+        
+        for pasal_id, pasal_text in segments:
+            pasal_chunks = self._chunk_text(pasal_text, pasal_id, chunk_index)
+            chunk_index += len(pasal_chunks)
+            chunks.extend(pasal_chunks)
+        
+        logger.info(f"Created {len(chunks)} semantic chunks from {len(segments)} pasal segments")
+        return chunks
+    
+    def _chunk_text(self, text: str, pasal_id: str, start_index: int) -> list[Chunk]:
+        """Chunk a single pasal text.
+        
+        Args:
+            text: Pasal text.
+            pasal_id: Pasal identifier.
+            start_index: Starting chunk index.
         
         Returns:
             List of Chunk objects.
         """
-        logger.info(f"Starting semantic chunking with threshold {self.threshold}")
-        
         sentences = self._split_sentences(text)
         if len(sentences) <= 1:
-            return [Chunk(text=text, chunk_id="chunk_0")]
+            return [Chunk(
+                text=text,
+                chunk_id=f"{pasal_id}_chunk_0",
+                pasal_refs=[pasal_id],
+            )]
         
         embeddings = self._compute_embeddings(sentences)
-        chunks = self._group_sentences(sentences, embeddings)
-        
-        logger.info(f"Created {len(chunks)} semantic chunks")
-        return chunks
+        return self._group_sentences(sentences, embeddings, pasal_id, start_index)
     
     def _split_sentences(self, text: str) -> list[str]:
-        """Split text into sentences.
-        
-        Args:
-            text: Input text.
-        
-        Returns:
-            List of sentences.
-        """
-        # Simple sentence splitting for Indonesian
-        # Split on sentence-ending punctuation followed by space or newline
+        """Split text into sentences."""
         sentences = re.split(r'(?<=[.!?])\s+', text)
-        
-        # Further split on newlines that likely indicate sentence boundaries
         result = []
         for sentence in sentences:
             parts = re.split(r'\n+', sentence)
             result.extend(part.strip() for part in parts if part.strip())
-        
         return result
     
     def _compute_embeddings(self, sentences: list[str]) -> np.ndarray:
-        """Compute embeddings for sentences.
-        
-        Args:
-            sentences: List of sentences.
-        
-        Returns:
-            Embedding matrix.
-        """
+        """Compute embeddings for sentences."""
         model = self._load_model()
         logger.debug(f"Computing embeddings for {len(sentences)} sentences")
         return model.encode(sentences, show_progress_bar=False)
@@ -123,55 +160,41 @@ class SemanticChunker:
         self,
         sentences: list[str],
         embeddings: np.ndarray,
+        pasal_id: str,
+        start_index: int,
     ) -> list[Chunk]:
-        """Group sentences into chunks based on similarity.
-        
-        Args:
-            sentences: List of sentences.
-            embeddings: Sentence embeddings.
-        
-        Returns:
-            List of Chunk objects.
-        """
+        """Group sentences into chunks based on similarity."""
         chunks = []
         current_sentences = [sentences[0]]
-        chunk_index = 0
+        chunk_index = start_index
         
         for i in range(1, len(sentences)):
-            # Compute cosine similarity between consecutive sentences
-            similarity = self._cosine_similarity(
-                embeddings[i - 1], embeddings[i]
-            )
+            similarity = self._cosine_similarity(embeddings[i - 1], embeddings[i])
             
             if similarity >= self.threshold:
                 current_sentences.append(sentences[i])
             else:
-                # Save current chunk and start new one
                 chunk_text = " ".join(current_sentences)
-                chunk_id = f"chunk_{chunk_index}"
-                chunks.append(Chunk(text=chunk_text, chunk_id=chunk_id))
-                chunk_index += 1
+                chunks.append(Chunk(
+                    text=chunk_text,
+                    chunk_id=f"{pasal_id}_chunk_{len(chunks)}",
+                    pasal_refs=[pasal_id],
+                ))
                 current_sentences = [sentences[i]]
         
-        # Don't forget the last chunk
         if current_sentences:
             chunk_text = " ".join(current_sentences)
-            chunk_id = f"chunk_{chunk_index}"
-            chunks.append(Chunk(text=chunk_text, chunk_id=chunk_id))
+            chunks.append(Chunk(
+                text=chunk_text,
+                chunk_id=f"{pasal_id}_chunk_{len(chunks)}",
+                pasal_refs=[pasal_id],
+            ))
         
         return chunks
     
     @staticmethod
     def _cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
-        """Compute cosine similarity between two vectors.
-        
-        Args:
-            a: First vector.
-            b: Second vector.
-        
-        Returns:
-            Cosine similarity score (0-1).
-        """
+        """Compute cosine similarity between two vectors."""
         dot_product = np.dot(a, b)
         norm_a = np.linalg.norm(a)
         norm_b = np.linalg.norm(b)
@@ -199,18 +222,35 @@ class FixedSizeChunker:
         self.chunk_size = chunk_size
         self.overlap = overlap
     
-    def chunk(self, text: str) -> list[Chunk]:
-        """Split text into fixed-size chunks.
+    def chunk_segments(
+        self,
+        segments: list[tuple[str, str]],
+    ) -> list[Chunk]:
+        """Chunk pasal segments using fixed-size windows.
         
         Args:
-            text: Input text to chunk.
+            segments: List of (pasal_id, pasal_text) tuples.
         
         Returns:
-            List of Chunk objects.
+            List of Chunk objects with pasal metadata.
         """
-        tokens = text.split()
+        logger.info("Starting fixed-size chunking")
         chunks = []
         chunk_index = 0
+        
+        for pasal_id, pasal_text in segments:
+            pasal_chunks = self._chunk_text(pasal_text, pasal_id, chunk_index)
+            chunk_index += len(pasal_chunks)
+            chunks.extend(pasal_chunks)
+        
+        logger.info(f"Created {len(chunks)} fixed-size chunks from {len(segments)} pasal segments")
+        return chunks
+    
+    def _chunk_text(self, text: str, pasal_id: str, start_index: int) -> list[Chunk]:
+        """Chunk a single pasal text using fixed-size windows."""
+        tokens = text.split()
+        chunks = []
+        chunk_local_index = 0
         
         start = 0
         while start < len(tokens):
@@ -218,11 +258,13 @@ class FixedSizeChunker:
             chunk_tokens = tokens[start:end]
             chunk_text = " ".join(chunk_tokens)
             
-            chunk_id = f"chunk_{chunk_index}"
-            chunks.append(Chunk(text=chunk_text, chunk_id=chunk_id))
+            chunks.append(Chunk(
+                text=chunk_text,
+                chunk_id=f"{pasal_id}_chunk_{chunk_local_index}",
+                pasal_refs=[pasal_id],
+            ))
             
-            chunk_index += 1
+            chunk_local_index += 1
             start = end - self.overlap
         
-        logger.info(f"Created {len(chunks)} fixed-size chunks")
         return chunks

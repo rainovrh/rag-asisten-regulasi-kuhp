@@ -548,6 +548,22 @@ Tahap 4: Dokumentasi
 | **Cakupan** | Mencakup minimal 5 topik hukum utama | Topic modeling analysis |
 | **Kebersihan Teks** | Tidak ada artefak preprocessing dalam query dan ground truth | Regex validation |
 
+### 4.6 OCR Data Quality Limitations
+
+Sumber data primer yaitu file PDF `KUHP BARU UU Nomor 1 Tahun 2023` memiliki keterbatasan kualitas ekstraksi teks yang perlu didokumentasikan:
+
+| Aspek | Kondisi | Dampak | Mitigasi |
+|-------|---------|--------|----------|
+| **Kualitas OCR** | Tidak merata antar halaman | Beberapa pasal awal (1, 2, 3, 5, 6) diekstrak sebagai teks pendek atau `"Cukup jelas"` | Dokumentasi eksplisit; tidak digunakan sebagai ground truth untuk evaluasi kuantitatif |
+| **Artefak OCR** | Karakter rusak: `FRESIDEN`, `REPUBUK`, `INOONESIA`, `Ayatl2l`, dll. | Dapat mengganggu proses cleaning dan chunking | Module `OcrCleaner` dengan 50+ regex replacement rules |
+| **Konsistensi Metadata** | Tidak semua chunk memiliki referensi pasal yang eksplisit | Evaluasi otomatis mungkin miss relevant chunks | Sistem menggunakan **backup pasal-level corpus** untuk segmentasi eksplisit sebelum semantic chunking |
+| **Keseimbangan Retrieval** | Query tentang pasal dengan ekstraksi buruk akan mendapatkan hasil yang kurang relevan | Hit Rate untuk pasal tersebut menjadi rendah | Diakui sebagai **baseline perbandingan** di Bab 4; bukan kegagalan sistem |
+
+**Catatan Penting untuk Evaluasi:**
+- Golden Dataset hanya menggunakan pasal dengan ekstraksi teks yang cukup baik untuk ground truth yang dapat diverifikasi.
+- Metrik evaluasi (Hit Rate, MRR) dihitung dengan **pasal mapping** yang di-generate dari corpus bersih, bukan dari nomor pasal secara harfiah.
+- Hasil evaluasi yang rendah pada pasal tertentu tidak necessarily mengindikasikan kegagalan sistem, melainkan keterbatasan data sumber.
+
 ---
 
 ## 5. SYSTEM CONFIGURATION REFERENCE

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Build FAISS vector index."""
 
-import sys
+import json
 from pathlib import Path
+import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -11,7 +12,9 @@ from src.config.settings import settings
 from src.utils.logger import setup_logger
 from src.retrieval.dense_retriever import DenseRetriever
 from src.preprocessing.chunker import SemanticChunker
-import json
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_core.documents import Document
 
 
 def main() -> None:
@@ -19,23 +22,31 @@ def main() -> None:
     setup_logger("INFO")
     
     corpus_path = PROCESSED_DATA_DIR / "kuhp_bersih.json"
+    metadata_path = PROCESSED_DATA_DIR / "kuhp_bersih.metadata.json"
     index_path = INDEXES_DIR / "faiss_index_kuhp"
     
     with open(corpus_path, "r", encoding="utf-8") as f:
         corpus_data = json.load(f)
     
-    # Create documents for FAISS
-    from langchain_community.vectorstores import FAISS
-    from langchain_huggingface import HuggingFaceEmbeddings
-    from langchain_core.documents import Document
+    metadata_map = {}
+    if metadata_path.exists():
+        with open(metadata_path, "r", encoding="utf-8") as f:
+            metadata_map = json.load(f)
+    
     documents = []
     for doc_id, text in corpus_data.items():
+        meta = metadata_map.get(doc_id, {})
         documents.append(Document(
             page_content=text,
-            metadata={"chunk_id": doc_id, "source": "KUHP BARU UU No 1 Tahun 2023"},
+            metadata={
+                "chunk_id": doc_id,
+                "source": meta.get("source", "KUHP BARU UU No 1 Tahun 2023"),
+                "pasal_refs": meta.get("pasal_refs", []),
+                "char_count": meta.get("char_count", len(text)),
+                "token_count": meta.get("token_count", len(text.split())),
+            },
         ))
     
-    # Build index
     retriever = DenseRetriever()
     retriever._vectorstore = FAISS.from_documents(
         documents,

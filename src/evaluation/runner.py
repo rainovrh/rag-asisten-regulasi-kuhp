@@ -18,7 +18,7 @@ from src.generation.prompts import get_legal_qa_prompt
 
 logger = get_logger(__name__)
 
-_PASAL_PATTERN = re.compile(r'pasal\s+(\d+[a-zA-Z]*)', re.IGNORECASE)
+_PASAL_PATTERN = re.compile(r'(pasal\s+\d+[a-zA-Z]*(?:\s+ayat\s*\(\s*\d+\s*\))?)', re.IGNORECASE)
 
 
 class EvaluationRunner:
