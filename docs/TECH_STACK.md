@@ -131,7 +131,7 @@ pip --version
 **Model yang Digunakan**:
 - **LLM**: Llama-3 8B Instruct (via Ollama)
 - **Quantization**: 4-bit GGUF/AWQ
-- **Embedding**: `indobenchmark/indobert-base-p1` atau `BAAI/bge-m3`
+- **Embedding**: `indobenchmark/indobert-base-p1` (dengan mean pooling)
 
 ### 3.6 Evaluation & Metrics
 

@@ -14,6 +14,26 @@ from src.config.constants import DEFAULT_EMBEDDING_MODEL, DEFAULT_EMBEDDING_DEVI
 logger = get_logger(__name__)
 
 
+def _create_embedding(model_name: str, device: str):
+    """Create embedding object based on model name.
+    
+    Args:
+        model_name: HuggingFace model name.
+        device: Device to run model on.
+    
+    Returns:
+        LangChain embedding object.
+    """
+    if "indobenchmark/indobert" in model_name.lower():
+        from src.retrieval.indobert_embedding import IndoBERTEmbedding
+        return IndoBERTEmbedding(model_name=model_name, device=device)
+    else:
+        return HuggingFaceEmbeddings(
+            model_name=model_name,
+            model_kwargs={"device": device},
+        )
+
+
 class DenseRetriever:
     """Dense retrieval using FAISS vector database."""
     
@@ -36,6 +56,7 @@ class DenseRetriever:
         self.embedding_model = embedding_model
         self.device = device
         self._vectorstore: Optional[FAISS] = None
+        self._embedding = _create_embedding(embedding_model, device)
         
         if index_path is not None:
             self.load_index(index_path)
@@ -52,14 +73,9 @@ class DenseRetriever:
         index_path = validate_file_path(index_path, must_exist=True)
         logger.info(f"Loading FAISS index from {index_path}")
         
-        embeddings = HuggingFaceEmbeddings(
-            model_name=self.embedding_model,
-            model_kwargs={"device": self.device},
-        )
-        
         self._vectorstore = FAISS.load_local(
             str(index_path),
-            embeddings,
+            self._embedding,
             allow_dangerous_deserialization=True,
         )
         logger.info("FAISS index loaded successfully")

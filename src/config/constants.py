@@ -43,9 +43,9 @@ FALLBACK_CHUNKING_METHOD = "fixed_size"
 # EMBEDDING CONSTANTS
 # ============================================================================
 
-DEFAULT_EMBEDDING_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+DEFAULT_EMBEDDING_MODEL = "indobenchmark/indobert-base-p1"
 DEFAULT_EMBEDDING_DEVICE = "cpu"
-EMBEDDING_DIMENSION = 384  # For sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+EMBEDDING_DIMENSION = 768  # For indobenchmark/indobert-base-p1
 
 # ============================================================================
 # LLM CONSTANTS

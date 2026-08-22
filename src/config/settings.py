@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     log_dir: Path = Path("logs")
     
     # Embedding Model
-    embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    embedding_model: str = "indobenchmark/indobert-base-p1"
     embedding_device: str = "cpu"
     
     # LLM Configuration
@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     dense_top_k: int = 10
     final_top_k: int = 5
     rrf_k: int = 60
-    crag_threshold: float = 0.020
+    crag_threshold: float = 0.010
     
     # Semantic Chunking
     chunking_threshold: float = 0.75

@@ -62,7 +62,7 @@ Input: Korpus Regulasi (KUHP Baru UU No. 1 Tahun 2023 - Format PDF/TXT)
   ▼
 [4] Vector Embedding
   │   • Konversi chunk menjadi representasi vektor berdimensi tinggi
-  │   • Model embedding: indobenchmark/indobert-base-p1 atau BAAI/bge-m3
+  │   • Model embedding: indobenchmark/indobert-base-p1
   │
   ▼
 [5] Vector Database Indexing
@@ -587,7 +587,7 @@ system_config:
     semantic_chunking:
       enabled: true
       threshold: 0.75
-      embedding_model: "indobenchmark/indobert-base-p1"
+      embedding_model: "BAAI/bge-m3"
       sentence_splitter: "indonesian-nlp"
   
   retrieval:
@@ -600,7 +600,7 @@ system_config:
         top_k: 10
       dense:
         algorithm: "CosineSimilarity"
-        embedding_model: "BAAI/bge-m3"
+      embedding_model: "indobenchmark/indobert-base-p1"
         top_k: 10
     
     rrf:

@@ -148,7 +148,7 @@ CREATE TABLE chunks (
     chunking_method chunking_method NOT NULL,
     token_count INTEGER,
     char_count INTEGER NOT NULL,
-    embedding_vector VECTOR(384), -- For indobenchmark/indobert-base-p1
+    embedding_vector VECTOR(768), -- For indobenchmark/indobert-base-p1
     embedding_model VARCHAR(100),
     metadata JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -758,7 +758,7 @@ ON CONFLICT DO NOTHING;
 
 -- Function: Search chunks by similarity
 CREATE OR REPLACE FUNCTION search_chunks_similar(
-    query_embedding VECTOR(384),
+    query_embedding VECTOR(768),
     match_threshold FLOAT DEFAULT 0.7,
     match_count INTEGER DEFAULT 10
 )

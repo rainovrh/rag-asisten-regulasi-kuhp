@@ -10,10 +10,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.config.paths import PROCESSED_DATA_DIR, INDEXES_DIR
 from src.config.settings import settings
 from src.utils.logger import setup_logger
-from src.retrieval.dense_retriever import DenseRetriever
+from src.retrieval.dense_retriever import DenseRetriever, _create_embedding
 from src.preprocessing.chunker import SemanticChunker
 from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 
 
@@ -47,15 +46,9 @@ def main() -> None:
             },
         ))
     
-    retriever = DenseRetriever()
-    retriever._vectorstore = FAISS.from_documents(
-        documents,
-        HuggingFaceEmbeddings(
-            model_name=settings.embedding_model,
-            model_kwargs={"device": settings.embedding_device},
-        ),
-    )
-    retriever._vectorstore.save_local(str(index_path))
+    embedding = _create_embedding(settings.embedding_model, settings.embedding_device)
+    vectorstore = FAISS.from_documents(documents, embedding)
+    vectorstore.save_local(str(index_path))
     print(f"FAISS index saved to {index_path}")
 
 
