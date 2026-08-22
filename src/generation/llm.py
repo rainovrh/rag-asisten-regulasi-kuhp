@@ -1,5 +1,6 @@
 """LLM interface for text generation."""
 
+import re
 from typing import Optional
 
 from langchain_community.llms import Ollama
@@ -17,6 +18,15 @@ class GenerationError(Exception):
 
 class LLMEngine:
     """LLM inference engine using Ollama."""
+    
+    REFUSAL_PATTERNS = [
+        r"saya tidak dapat menemukan pasal yang relevan",
+        r"tidak dapat menemukan",
+        r"tidak ditemukan",
+        r"tidak ada informasi",
+        r"konteks tidak memuat",
+        r"tidak memiliki informasi",
+    ]
     
     def __init__(
         self,
@@ -80,3 +90,15 @@ class LLMEngine:
         """
         prompt = template.format(context=context, query=query)
         return self.generate(prompt)
+    
+    def is_refusal(self, text: str) -> bool:
+        """Check if the generated text is a refusal.
+        
+        Args:
+            text: Generated text.
+        
+        Returns:
+            True if the text appears to be a refusal.
+        """
+        text_lower = text.lower()
+        return any(re.search(p, text_lower) for p in self.REFUSAL_PATTERNS)

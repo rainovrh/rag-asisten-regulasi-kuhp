@@ -564,6 +564,30 @@ Sumber data primer yaitu file PDF `KUHP BARU UU Nomor 1 Tahun 2023` memiliki ket
 - Metrik evaluasi (Hit Rate, MRR) dihitung dengan **pasal mapping** yang di-generate dari corpus bersih, bukan dari nomor pasal secara harfiah.
 - Hasil evaluasi yang rendah pada pasal tertentu tidak necessarily mengindikasikan kegagalan sistem, melainkan keterbatasan data sumber.
 
+### 4.7 Hallucination Mitigation Strategy
+
+Sistem menerapkan strategi berlapis untuk mencegah LLM menghasilkan jawaban di luar konteks regulasi:
+
+| Layer | Mekanisme | Implementasi |
+|-------|-----------|--------------|
+| **1. Prompt Engineering** | System prompt dengan instruksi refusal eksplisit | `LEGAL_QA_TEMPLATE` memaksa LLM mengembalikan kalimat standar jika konteks tidak relevan |
+| **2. Retrieval Filtering (CRAG)** | Threshold skor minimum untuk menyaring dokumen tidak relevan | `ReRanker.filter()` dengan threshold `0.010` |
+| **3. Empty Context Handling** | UI menampilkan pesan standar jika 0 hasil melewati threshold | `render_no_context_message()` |
+| **4. Post-generation Validation** | Deteksi refusal pattern di output LLM | `LLMEngine.is_refusal()` dengan regex patterns |
+| **5. Local LLM Deployment** | Tidak ada API eksternal; data tidak keluar dari sistem | Ollama + Llama-3 8B running locally |
+
+**Prompt Refusal Pattern:**
+```
+Jika DOKUMEN KONTEKS tidak memuat informasi yang relevan untuk menjawab 
+PERTANYAAN PENGGUNA, jawab dengan persis kalimat berikut:
+"Saya tidak dapat menemukan pasal yang relevan dalam KUHP Baru untuk 
+menjawab pertanyaan ini."
+```
+
+**Audit Trail:**
+- Semua refusal (detected via `is_refusal()`) dicatat untuk analisis selanjutnya.
+- Refusal rate menjadi metrik tambahan dalam evaluasi sistem.
+
 ---
 
 ## 5. SYSTEM CONFIGURATION REFERENCE

@@ -135,6 +135,13 @@ def main() -> None:
                     )
                     prompt = get_legal_qa_prompt()
                     ai_response = llm.generate_with_template(prompt, context_str, user_query)
+                    
+                    if llm.is_refusal(ai_response):
+                        ai_response = (
+                            "⚠️ **Informasi Tidak Ditemukan dalam KUHP Baru.**\n\n"
+                            "Sistem tidak dapat menemukan pasal yang relevan untuk "
+                            "menjawab pertanyaan ini berdasarkan konteks yang tersedia."
+                        )
                 
                 st.markdown(ai_response)
                 
