@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run evaluation pipeline."""
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -20,6 +21,20 @@ import json
 
 def main() -> None:
     """Run evaluation."""
+    parser = argparse.ArgumentParser(description="Run evaluation pipeline")
+    parser.add_argument(
+        "--ragas",
+        action="store_true",
+        help="Run RAGAS evaluation (Faithfulness, Answer Relevance)",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Output CSV path",
+    )
+    args = parser.parse_args()
+    
     setup_logger("INFO")
     
     # Load corpus
@@ -47,8 +62,8 @@ def main() -> None:
         dataset,
         pasal_mapping_path=pasal_mapping_path,
     )
-    output_path = LOGS_DIR / "evaluation_results.csv"
-    results = runner.run(output_path)
+    output_path = args.output or (LOGS_DIR / "evaluation_results.csv")
+    results = runner.run(output_path, run_ragas=args.ragas)
     
     print(f"\nEvaluation complete. Results saved to {output_path}")
     print(f"Total scenarios: {len(results)}")

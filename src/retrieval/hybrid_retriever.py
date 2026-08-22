@@ -20,6 +20,8 @@ class HybridRetriever:
         dense_retriever: DenseRetriever,
         rrf_k: int = DEFAULT_RRF_K,
         crag_threshold: float = DEFAULT_CRAG_THRESHOLD,
+        use_bm25: bool = True,
+        use_dense: bool = True,
     ) -> None:
         """Initialize hybrid retriever.
         
@@ -28,11 +30,15 @@ class HybridRetriever:
             dense_retriever: Dense retriever instance.
             rrf_k: RRF constant for rank fusion.
             crag_threshold: Minimum RRF score to keep a result.
+            use_bm25: Whether to use BM25 retriever.
+            use_dense: Whether to use dense retriever.
         """
         self._bm25 = bm25_retriever
         self._dense = dense_retriever
         self._rrf_k = rrf_k
         self._reranker = ReRanker(threshold=crag_threshold)
+        self._use_bm25 = use_bm25
+        self._use_dense = use_dense
     
     def search(
         self,
@@ -40,7 +46,7 @@ class HybridRetriever:
         top_k: int = 10,
         apply_crag: bool = True,
     ) -> list[tuple[str, float, str]]:
-        """Execute hybrid search with RRF fusion.
+        """Execute search with configured retrievers.
         
         Args:
             query: Search query.
@@ -50,9 +56,9 @@ class HybridRetriever:
         Returns:
             List of (doc_id, score, text) tuples.
         """
-        # Get results from both retrievers
-        bm25_results = self._bm25.search(query, top_k=top_k)
-        dense_results = self._dense.search(query, top_k=top_k)
+        # Get results from active retrievers
+        bm25_results = self._bm25.search(query, top_k=top_k) if self._use_bm25 else []
+        dense_results = self._dense.search(query, top_k=top_k) if self._use_dense else []
         
         # Fuse with RRF
         rrf_scores = self._reciprocal_rank_fusion(bm25_results, dense_results)
@@ -97,13 +103,15 @@ class HybridRetriever:
         rrf_scores: dict[str, float] = {}
         
         # Process BM25 results
-        for rank, (doc_id, _) in enumerate(bm25_results):
-            if doc_id:
-                rrf_scores[doc_id] = rrf_scores.get(doc_id, 0.0) + 1.0 / (self._rrf_k + rank + 1)
+        if self._use_bm25:
+            for rank, (doc_id, _) in enumerate(bm25_results):
+                if doc_id:
+                    rrf_scores[doc_id] = rrf_scores.get(doc_id, 0.0) + 1.0 / (self._rrf_k + rank + 1)
         
         # Process dense results
-        for rank, (doc_id, _) in enumerate(dense_results):
-            if doc_id:
-                rrf_scores[doc_id] = rrf_scores.get(doc_id, 0.0) + 1.0 / (self._rrf_k + rank + 1)
+        if self._use_dense:
+            for rank, (doc_id, _) in enumerate(dense_results):
+                if doc_id:
+                    rrf_scores[doc_id] = rrf_scores.get(doc_id, 0.0) + 1.0 / (self._rrf_k + rank + 1)
         
         return rrf_scores

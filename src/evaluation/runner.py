@@ -67,11 +67,12 @@ class EvaluationRunner:
         pasal_key = match.group(1).lower()
         return set(self._pasal_mapping.get(pasal_key, []))
     
-    def run(self, output_path: Optional[Path] = None) -> pd.DataFrame:
+    def run(self, output_path: Optional[Path] = None, run_ragas: bool = False) -> pd.DataFrame:
         """Run evaluation on all scenarios.
         
         Args:
             output_path: Path to save results CSV.
+            run_ragas: Whether to run RAGAS evaluation (Faithfulness, Answer Relevance).
         
         Returns:
             DataFrame with evaluation results.
@@ -170,6 +171,10 @@ class EvaluationRunner:
         logger.info(f"Hit Rate@5: {hit_rate:.4f}")
         logger.info(f"MRR: {mrr:.4f}")
         
+        # RAGAS evaluation
+        if run_ragas:
+            df = self._run_ragas(df)
+        
         # Save results
         if output_path is None:
             output_path = settings.log_dir / "evaluation_results.csv"
@@ -180,5 +185,61 @@ class EvaluationRunner:
         json_output_path = output_path.with_suffix(".json")
         df.to_json(json_output_path, orient="records", indent=2, force_ascii=False)
         logger.info(f"Results saved to {json_output_path}")
+        
+        return df
+    
+    def _run_ragas(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Run RAGAS evaluation on generated answers.
+        
+        Args:
+            df: DataFrame with evaluation results.
+        
+        Returns:
+            DataFrame with RAGAS scores added.
+        """
+        try:
+            from ragas import evaluate
+            from ragas.metrics import faithfulness, answer_relevancy
+            from datasets import Dataset
+        except ImportError:
+            logger.warning("RAGAS not installed, skipping RAGAS evaluation")
+            df["faithfulness"] = None
+            df["answer_relevancy"] = None
+            return df
+        
+        logger.info("Running RAGAS evaluation...")
+        
+        # Prepare data for RAGAS
+        questions = df["Query"].astype(str).tolist()
+        answers = df["AI_Answer"].astype(str).tolist()
+        
+        contexts = []
+        for ctx in df["Retrieved_Context"]:
+            if pd.isna(ctx) or not str(ctx).strip():
+                contexts.append([""])
+            else:
+                contexts.append([str(ctx)])
+        
+        data_dict = {
+            "question": questions,
+            "answer": answers,
+            "contexts": contexts,
+        }
+        
+        ragas_dataset = Dataset.from_dict(data_dict)
+        
+        # Run evaluation
+        result = evaluate(
+            dataset=ragas_dataset,
+            metrics=[faithfulness, answer_relevancy],
+        )
+        
+        result_df = result.to_pandas()
+        
+        # Merge with original df
+        df = pd.concat([df, result_df[["faithfulness", "answer_relevancy"]]], axis=1)
+        
+        logger.info(f"Avg Faithfulness: {df['faithfulness'].mean():.4f}")
+        logger.info(f"Avg Answer Relevancy: {df['answer_relevancy'].mean():.4f}")
         
         return df
