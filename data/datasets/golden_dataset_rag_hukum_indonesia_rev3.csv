@@ -1,0 +1,51 @@
+ID,Query,Konteks Pasal,Ground Truth,context_type
+1,Apakah seseorang bisa dipidana atas perbuatan yang belum diatur undang-undang?,Pasal 1 ayat (1),Tidak bisa. Seseorang hanya dapat dipidana berdasarkan peraturan pidana yang telah ada sebelum perbuatan dilakukan.,factoid
+2,Apakah hakim boleh menggunakan analogi untuk menentukan tindak pidana?,Pasal 1 ayat (2),Tidak boleh. Penetapan adanya tindak pidana dilarang menggunakan analogi.,factoid
+3,Apakah hukum yang hidup dalam masyarakat tetap dapat berlaku walaupun tidak diatur dalam KUHP?,Pasal 2 ayat (1),"Ya, hukum yang hidup dalam masyarakat dapat berlaku sepanjang sesuai dengan Pancasila, UUD 1945, HAM, dan asas hukum umum.",open-ended
+4,Peraturan mana yang dipakai jika undang-undang berubah setelah tindak pidana terjadi?,Pasal 3 ayat (1),"Digunakan peraturan yang baru, kecuali aturan lama lebih menguntungkan pelaku.",open-ended
+5,Apa akibat jika suatu perbuatan tidak lagi dianggap tindak pidana menurut aturan baru?,Pasal 3 ayat (2),Proses hukum terhadap tersangka atau terdakwa harus dihentikan demi hukum.,open-ended
+6,Apakah KUHP berlaku untuk tindak pidana yang dilakukan di wilayah Indonesia?,Pasal 4 huruf a,"Ya, KUHP berlaku bagi setiap orang yang melakukan tindak pidana di wilayah NKRI.",factoid
+7,Apakah tindak pidana siber yang akibatnya dirasakan di Indonesia dapat diproses di Indonesia?,Pasal 4 huruf c,"Ya, tindak pidana teknologi informasi yang akibatnya terjadi di Indonesia dapat diproses berdasarkan KUHP.",factoid
+8,Apakah orang di luar negeri bisa dipidana jika merugikan kepentingan Indonesia?,Pasal 5,"Bisa, jika tindak pidana tersebut berkaitan dengan kepentingan nasional Indonesia sebagaimana diatur Pasal 5.",factoid
+9,Apakah Indonesia dapat menindak pelaku tindak pidana internasional di luar negeri?,Pasal 6,"Ya, KUHP berlaku bagi tindak pidana internasional yang telah ditetapkan dalam undang-undang.",factoid
+10,Apakah WNI yang melakukan tindak pidana di luar negeri tetap bisa dipidana di Indonesia?,Pasal 8 ayat (1),"Ya, WNI yang melakukan tindak pidana di luar negeri dapat diproses menurut KUHP.",factoid
+11,Apakah WNI yang melakukan tindak pidana di luar negeri bisa dijatuhi pidana mati jika negara setempat tidak mengenal pidana mati?,Pasal 8 ayat (5),Tidak dapat dijatuhi pidana mati jika hukum negara tempat kejadian tidak mengancam pidana mati.,factoid
+12,Kapan waktu tindak pidana dianggap terjadi?,Pasal 10,Waktu tindak pidana adalah saat dilakukannya perbuatan yang dapat dipidana.,factoid
+13,Di mana tempat tindak pidana dianggap terjadi?,Pasal 11,Tempat tindak pidana adalah tempat dilakukannya perbuatan yang dapat dipidana.,factoid
+14,Apa definisi tindak pidana menurut KUHP baru?,Pasal 12 ayat (1),Tindak pidana adalah perbuatan yang diancam pidana dan/atau tindakan oleh peraturan perundang-undangan.,open-ended
+15,Kapan permufakatan jahat dianggap terjadi?,Pasal 13 ayat (1),Permufakatan jahat terjadi jika dua orang atau lebih sepakat melakukan tindak pidana.,factoid
+16,Apakah pelaku permufakatan jahat tetap dipidana jika menarik diri dari rencana?,Pasal 14,Tidak dipidana jika menarik diri atau mencegah terjadinya tindak pidana.,factoid
+17,Apa yang dimaksud persiapan melakukan tindak pidana?,Pasal 15 ayat (1),"Persiapan adalah tindakan menyiapkan sarana, informasi, atau kondisi untuk melakukan tindak pidana.",factoid
+18,Apakah persiapan tindak pidana tetap dipidana jika pelaku menghentikan rencananya?,Pasal 16,Tidak dipidana jika pelaku menghentikan atau mencegah terciptanya kondisi tindak pidana.,factoid
+19,Apakah percobaan tindak pidana dapat dipidana?,Pasal 17 ayat (1),"Ya, percobaan tindak pidana dapat dipidana jika sudah ada permulaan pelaksanaan.",factoid
+20,Apakah pelaku percobaan tindak pidana bebas pidana jika sukarela membatalkan aksinya?,Pasal 18 ayat (1),"Ya, jika pelaku dengan sukarela menghentikan atau mencegah akibat tindak pidana.",factoid
+21,Apakah percobaan tindak pidana ringan yang hanya diancam denda kategori II dipidana?,Pasal 19,Tidak dipidana.,factoid
+22,Apa yang dimaksud turut serta melakukan tindak pidana?,Pasal 20 huruf c,"Dipidana sebagai pelaku, yaitu setiap orang yang secara sadar melakukan kerja sama erat antara dua orang atau lebih, dengan masing-masing memberikan kontribusi substantif dalam terwujudnya tindak pidana.",open-ended
+23,Siapa yang disebut pembantu tindak pidana?,Pasal 21 ayat (1),"Dipidana sebagai pembantu tindak pidana, yaitu mereka yang sengaja memberi kesempatan, sarana, atau keterangan sebelum tindak pidana terjadi, atau memberikan bantuan pada saat tindak pidana sedang berlangsung.",open-ended
+24,Kapan seseorang dianggap mengulangi tindak pidana?,Pasal 23 ayat (1),"Terjadi jika seseorang melakukan tindak pidana kembali dalam waktu lima tahun setelah menjalani pidana, namun hal ini tidak otomatis berlaku untuk semua tindak pidana melainkan harus memenuhi jenis tindak pidana sejenis atau syarat pengulangan tertentu sebagaimana diatur secara khusus dalam Pasal 23.",factoid
+25,Kapan pelaku hanya dapat dituntut atas dasar pengaduan?,Pasal 24 ayat (1),Dalam tindak pidana aduan yang secara tegas ditentukan undang-undang.,factoid
+26,Siapa yang berhak mengadu jika korban tindak pidana aduan masih di bawah 16 tahun?,Pasal 25 ayat (1),Orang tua atau wali korban.,factoid
+27,Siapa yang dapat mengadu jika korban tindak pidana aduan meninggal dunia?,Pasal 27,"Orang tua, anak, suami, atau istri korban.",factoid
+28,Bagaimana cara mengajukan pengaduan tindak pidana aduan?,Pasal 28 ayat (2),Pengaduan dapat diajukan secara lisan atau tertulis kepada pejabat berwenang.,open-ended
+29,Berapa batas waktu pengajuan pengaduan tindak pidana aduan?,Pasal 29 ayat (1),"Enam bulan sejak orang yang berhak mengadu mengetahui adanya tindak pidana jika ia bertempat tinggal di dalam negeri, atau sembilan bulan jika ia bertempat tinggal di luar negeri.",open-ended
+30,Apakah pengaduan dapat dicabut kembali?,Pasal 30 ayat (1),"Ya, dalam waktu tiga bulan sejak pengaduan diajukan.",factoid
+31,Apakah seseorang dipidana jika melakukan perbuatan untuk melaksanakan undang-undang?,Pasal 31,Tidak dipidana karena merupakan alasan pembenar.,factoid
+32,Apakah menjalankan perintah jabatan dapat menghapus pidana?,Pasal 32,"Ya, jika perintah berasal dari pejabat berwenang.",factoid
+33,Apakah keadaan darurat dapat menghapus pidana?,Pasal 33,"Ya, perbuatan dalam keadaan darurat tidak dipidana.",factoid
+34,Apakah pembelaan diri terhadap serangan seketika dapat menghapus pidana?,Pasal 34,"Ya, pembelaan terpaksa terhadap serangan melawan hukum tidak dipidana.",factoid
+35,Kapan seseorang dapat dimintai pertanggungjawaban pidana?,Pasal 36 ayat (1),Jika tindak pidana dilakukan dengan sengaja atau karena kealpaan.,factoid
+36,Apakah seseorang dapat dipidana tanpa memperhatikan kesalahan?,Pasal 37,Bisa jika ditentukan secara khusus oleh undang-undang.,factoid
+37,Apakah penyandang disabilitas mental dapat dikurangi pidananya?,Pasal 38,"Ya, pidananya dapat dikurangi dan/atau dikenai tindakan.",factoid
+38,Apakah penyandang disabilitas mental berat dapat dijatuhi pidana?,Pasal 39,"Tidak dapat dijatuhi pidana melainkan dapat dikenai tindakan, khusus bagi penyandang disabilitas mental dalam kondisi kekambuhan akut dengan gambaran psikotik dan/atau disabilitas intelektual tingkat sedang atau berat.",factoid
+39,Apakah anak di bawah 12 tahun dapat dipidana?,Pasal 40,Tidak dapat dimintai pertanggungjawaban pidana.,factoid
+40,Apa tindakan terhadap anak di bawah 12 tahun yang melakukan tindak pidana?,Pasal 41,"Diselesaikan melalui keputusan bersama oleh penyidik, pembimbing kemasyarakatan, dan pekerja sosial profesional, berupa penyerahan kembali kepada orang tua/wali atau pengikutsertaan dalam program pendidikan, pembinaan, dan pembimbingan di instansi pemerintah paling lama enam bulan.",open-ended
+41,Apakah orang yang dipaksa melakukan tindak pidana dapat dipidana?,Pasal 42,Tidak dipidana jika dipaksa oleh kekuatan atau ancaman yang tidak dapat dihindari.,factoid
+42,Apakah pembelaan terpaksa yang melampaui batas tetap dipidana?,Pasal 43,Tidak dipidana jika terjadi karena keguncangan jiwa hebat akibat serangan.,factoid
+43,Apakah bawahan tetap dipidana jika menjalankan perintah jabatan tanpa wewenang?,Pasal 44,Tidak dipidana jika dengan iktikad baik mengira perintah tersebut sah.,factoid
+44,Apakah korporasi dapat menjadi subjek tindak pidana?,Pasal 45 ayat (1),"Ya, korporasi merupakan subjek tindak pidana.",factoid
+45,Kapan tindak pidana dianggap dilakukan oleh korporasi?,Pasal 46,"Tindak pidana dianggap dilakukan oleh korporasi jika dilakukan oleh pengurus, pemberi perintah, pemegang kendali, atau pihak lain berdasarkan hubungan kerja atau hubungan lain yang bertindak untuk kepentingan dan dalam lingkup usaha korporasi (wajib dibaca bersama Pasal 47).",open-ended
+46,Kapan korporasi dapat dimintai pertanggungjawaban pidana?,Pasal 48,"Korporasi dapat dimintai pertanggungjawaban jika tindak pidana termasuk dalam lingkup usahanya, memberikan keuntungan melawan hukum, dilakukan berdasarkan kebijakan korporasi, terjadi pembiaran, atau terdapat kegagalan korporasi dalam melakukan upaya pencegahan dan kepatuhan.",open-ended
+47,Siapa saja yang dapat dimintai pertanggungjawaban atas tindak pidana korporasi?,Pasal 49,"Tanggung jawab dikenakan secara mandiri atau bersamaan kepada korporasi, pengurus, pemberi perintah, pemegang kendali (controlling person), dan/atau pemilik manfaat (beneficial owner), yang sifat pemidanaannya tidak otomatis berlaku kumulatif untuk seluruh pihak melainkan dinilai berdasarkan porsi kesalahan masing-masing.",open-ended
+48,Apa tujuan pemidanaan menurut KUHP baru?,Pasal 51,"Pemidanaan bertujuan melindungi masyarakat, membina pelaku, menyelesaikan konflik, dan menumbuhkan penyesalan.",open-ended
+49,Apakah pemidanaan boleh merendahkan martabat manusia?,Pasal 52,Tidak boleh.,open-ended
+50,Apa yang harus diutamakan hakim jika keadilan bertentangan dengan kepastian hukum?,Pasal 53 ayat (2),Hakim wajib mengutamakan keadilan.,open-ended

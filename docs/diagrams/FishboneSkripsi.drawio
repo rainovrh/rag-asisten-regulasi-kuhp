@@ -1,0 +1,226 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36">
+  <diagram name="Page-1" id="ue7g5k8GTivx_U5XtY3A">
+    <mxGraphModel dx="2201" dy="853" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-1" parent="1" style="whiteSpace=wrap;strokeWidth=2" value="Metode Pencarian (Retrieval)" vertex="1">
+          <mxGeometry height="60" width="120" x="56.458333333333236" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-2" parent="1" style="whiteSpace=wrap;strokeWidth=2" value="Keterbatasan Model LLM" vertex="1">
+          <mxGeometry height="60" width="120" x="56.458333333333236" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-3" parent="1" style="whiteSpace=wrap;strokeWidth=3" value="Tingginya Risiko Halusinasi dan Penurunan Akurasi pada Sistem RAG Domain Regulasi Bahasa Indonesia." vertex="1">
+          <mxGeometry height="60" width="210" x="700" y="1130" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-4" edge="1" parent="1" style="edgeStyle=none;strokeWidth=4;rounded=0;" target="3XVgVYLXgP-GSBzd2lkM-3" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="140" y="1160" as="sourcePoint" />
+            <mxPoint x="260" y="1110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-5" edge="1" parent="1" source="3XVgVYLXgP-GSBzd2lkM-1" style="edgeStyle=none;exitX=0.5;exitY=1;strokeWidth=3;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="116.45833333333323" y="1070" as="sourcePoint" />
+            <mxPoint x="176.45833333333323" y="1160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-6" edge="1" parent="1" style="edgeStyle=none;exitX=0.5;exitY=0;strokeWidth=3;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="116.45833333333323" y="1280" as="sourcePoint" />
+            <mxPoint x="176.45833333333323" y="1160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-7" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="66.45833333333323" y="1070" as="sourcePoint" />
+            <mxPoint x="126.45833333333323" y="1070" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-8" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="86.45833333333323" y="1106" as="sourcePoint" />
+            <mxPoint x="146.45833333333323" y="1106" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-9" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="106.45833333333323" y="1140" as="sourcePoint" />
+            <mxPoint x="166.45833333333323" y="1140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-13" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="106.45833333333323" y="1180" as="sourcePoint" />
+            <mxPoint x="166.45833333333323" y="1180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-14" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="86.45833333333323" y="1220" as="sourcePoint" />
+            <mxPoint x="146.45833333333323" y="1220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-15" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="66.45833333333323" y="1260" as="sourcePoint" />
+            <mxPoint x="126.45833333333323" y="1260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-36" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Strategi pencarian tunggal &#xa;gagal memberikan &#xa;hasil optimal." vertex="1">
+          <mxGeometry height="20" width="36.46" x="10" y="1060.97" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-39" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Model memiliki kecenderungan &#xa;menghasilkan informasi &#xa;fakta yang salah." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="46.4583333333332" y="1170.5000000000002" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-40" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Kesalahan fakta terdengar &#xa;sangat meyakinkan (halusinasi)." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="43.458333333333165" y="1199.4999999999998" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-41" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Rawan gagal tanpa &#xa;konteks tambahan dari luar." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="36.45833333333329" y="1240.0000000000002" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-58" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Keyword (BM25) presisi &#xa;namun lemah memahami &#xa;konteks semantik." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="19.461666666666524" y="1096.0022222222224" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-64" parent="1" style="whiteSpace=wrap;strokeWidth=2" value="Pemotongan Teks (Chunking)" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-65" parent="1" style="whiteSpace=wrap;strokeWidth=2" value="Domain Regulasi (Hukum)" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-66" edge="1" parent="1" source="3XVgVYLXgP-GSBzd2lkM-64" style="edgeStyle=none;exitX=0.5;exitY=1;strokeWidth=3;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="340" y="1070" as="sourcePoint" />
+            <mxPoint x="400" y="1160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-67" edge="1" parent="1" style="edgeStyle=none;exitX=0.5;exitY=0;strokeWidth=3;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="340.0000000000001" y="1280" as="sourcePoint" />
+            <mxPoint x="400" y="1160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-68" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="290.0000000000001" y="1070" as="sourcePoint" />
+            <mxPoint x="350" y="1070" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-69" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="310" y="1106" as="sourcePoint" />
+            <mxPoint x="369.9999999999999" y="1106" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-70" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="330" y="1140" as="sourcePoint" />
+            <mxPoint x="390.0000000000001" y="1140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-74" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="330" y="1180" as="sourcePoint" />
+            <mxPoint x="390.0000000000001" y="1180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-75" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="310" y="1220" as="sourcePoint" />
+            <mxPoint x="369.9999999999999" y="1220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-76" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="290.0000000000001" y="1260" as="sourcePoint" />
+            <mxPoint x="350" y="1260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-97" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Teknik chunking &#xa;ukurantetap (tradisional) &#xa;memutus aliran logika &#xa;antarkalimat." vertex="1">
+          <mxGeometry height="20" width="3.96" x="250.00000000000003" y="1060.97" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-98" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Sistem kehilangan konteks &#xa;global dokumen secara &#xa;keseluruhan." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="253.96" y="1100.5299999999997" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-99" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Gagal memahami struktur &#xa;dokumen hukum &#xa;yang hierarkis." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="283.96" y="1131" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-100" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Membutuhkan tingkat presisi &#xa;yang sangat tinggi." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="278.96" y="1170.5300000000002" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-101" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Kesalahan interpretasi berdampak &#xa;pada konsekuensi legal serius." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="283.9599999999999" y="1199.4999999999998" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-102" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Kesalahan data faktual &#xa;tidak dapat ditoleransi." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="273.0000000000001" y="1239.5300000000002" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-125" parent="1" style="whiteSpace=wrap;strokeWidth=2" value="Karakteristik Data &amp; Bahasa" vertex="1">
+          <mxGeometry height="60" width="120" x="495.8333333333331" y="991.5277777777775" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-126" parent="1" style="whiteSpace=wrap;strokeWidth=2" value="Pendekatan Sistem RAG Saat Ini" vertex="1">
+          <mxGeometry height="60" width="120" x="495.8333333333331" y="1281.5277777777776" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-127" edge="1" parent="1" source="3XVgVYLXgP-GSBzd2lkM-125" style="edgeStyle=none;exitX=0.5;exitY=1;strokeWidth=3;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="555.8333333333331" y="1071.5277777777776" as="sourcePoint" />
+            <mxPoint x="615.8333333333331" y="1161.5277777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-128" edge="1" parent="1" style="edgeStyle=none;exitX=0.5;exitY=0;strokeWidth=3;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="555.8333333333333" y="1281.5277777777776" as="sourcePoint" />
+            <mxPoint x="615.8333333333331" y="1161.5277777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-129" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="505.8333333333332" y="1071.5277777777776" as="sourcePoint" />
+            <mxPoint x="565.8333333333331" y="1071.5277777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-130" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="525.833333333333" y="1107.5277777777776" as="sourcePoint" />
+            <mxPoint x="585.833333333333" y="1107.5277777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-131" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="545.8333333333331" y="1141.5277777777776" as="sourcePoint" />
+            <mxPoint x="605.8333333333333" y="1141.5277777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-135" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="545.8333333333331" y="1181.5277777777776" as="sourcePoint" />
+            <mxPoint x="605.8333333333333" y="1181.5277777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-136" edge="1" parent="1" style="edgeStyle=none;endArrow=none;strokeWidth=2;rounded=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="525.833333333333" y="1221.5277777777776" as="sourcePoint" />
+            <mxPoint x="585.833333333333" y="1221.5277777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-158" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Bahasa Indonesia berstatus &#xa;sumber daya rendah &#xa;(low-resource language).&#xa;&#xa;&#xa;" vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="449.5833333333331" y="1075.9977777777776" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-159" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Penurunan akurasi sering &#xa;terjadi pada tugas &#xa;NLP kompleks." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="475.8333333333331" y="1098.9977777777774" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-160" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Teks regulasi memiliki &#xa;keterkaitan antarpasal &#xa;yang rumit." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="485.83333333333303" y="1131.9977777777776" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-161" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Belum ada integrasi utuh &#xa;antara &#xa;Hybrid Retrieval dan &#xa;Semantic Chunking." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="511.83333333333303" y="1177.4977777777779" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-162" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="RAG standar &#xa;merujuk dokumen &#xa;hukum tanpa persepsi &#xa;logika kalimat." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="485.83333333333303" y="1229.9977777777774" as="geometry" />
+        </mxCell>
+        <mxCell id="3XVgVYLXgP-GSBzd2lkM-188" parent="1" style="text;spacingTop=-5;fontSize=8;align=center;verticalAlign=middle;points=[]" value="Dense retrieval terdistraksi &#xa;oleh struktur teks hukum &#xa;yang serupa." vertex="1">
+          <mxGeometry height="19.999999999999886" width="30" x="43.45999999999998" y="1131" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
