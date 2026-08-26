@@ -15,8 +15,6 @@ class TextNormalizer:
     ABBREVIATIONS = {
         "uu": "undang-undang",
         "kuhp": "kitab undang-undang hukum pidana",
-        "kup": "kesehatan",
-        "pidana": "pidana",
     }
     
     def __init__(
