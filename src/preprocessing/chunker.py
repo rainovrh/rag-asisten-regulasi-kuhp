@@ -39,33 +39,47 @@ class Chunk:
 
 class PasalSegmenter:
     """Segment legal document text by pasal boundaries."""
-    
-    def __init__(self) -> None:
-        """Initialize pasal segmenter."""
+
+    def __init__(self, line_anchored: bool = False) -> None:
+        """Initialize pasal segmenter.
+
+        Args:
+            line_anchored: If True, only match pasal headings that open a
+                line, ignoring inline cross-references. Use this mode on
+                freshly cleaned text whose structural line breaks are still
+                intact (i.e. before normalization flattens whitespace).
+        """
+        super().__init__()
+        self.line_anchored = line_anchored
+        prefix = r'^[ \t]*' if line_anchored else ''
         self._pattern = re.compile(
-            r'(pasal\s+\d+[a-zA-Z]*(?:\s+ayat\s*\(\s*\d+\s*\))?)',
-            re.IGNORECASE,
+            prefix + r'(pasal\s+\d+[a-zA-Z]*(?:\s+ayat\s*\(\s*\d+\s*\))?)',
+            re.IGNORECASE | re.MULTILINE,
         )
-    
+
     def segment(self, text: str) -> list[tuple[str, str]]:
         """Split text into pasal segments.
-        
+
         Args:
             text: Input text.
-        
+
         Returns:
-            List of (pasal_id, pasal_text) tuples.
+            List of unique (pasal_id, pasal_text) tuples.
         """
         matches = list(self._pattern.finditer(text))
         segments = []
-        
+        seen_ids: set[str] = set()
+
         for i, match in enumerate(matches):
             pasal_id = match.group(1).lower()
+            if pasal_id in seen_ids:
+                continue
+            seen_ids.add(pasal_id)
             start = match.start()
             end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
             pasal_text = text[start:end].strip()
             segments.append((pasal_id, pasal_text))
-        
+
         logger.info(f"Segmented document into {len(segments)} pasal segments")
         return segments
 

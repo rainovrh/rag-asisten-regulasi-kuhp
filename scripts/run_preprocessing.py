@@ -113,15 +113,19 @@ def main() -> None:
                 segments.append((pasal_id, cleaned_text))
         print(f"Loaded {len(segments)} pasal segments from backup")
     else:
-        print("Using regex-based segmentation on full document")
+        print("Using line-anchored pasal segmentation on cleaned document")
         cleaner = DocumentCleaner()
         cleaned_text = cleaner.process(pdf_path)
         ocr_cleaner = OcrCleaner()
         cleaned_text = ocr_cleaner.clean(cleaned_text)
+        segmenter = PasalSegmenter(line_anchored=True)
+        raw_segments = segmenter.segment(cleaned_text)
         normalizer = TextNormalizer()
-        normalized_text = normalizer.normalize(cleaned_text)
-        segmenter = PasalSegmenter()
-        segments = segmenter.segment(normalized_text)
+        segments = []
+        for pasal_id, text in raw_segments:
+            normalized_text = normalizer.normalize(text)
+            if normalized_text.strip():
+                segments.append((pasal_id, normalized_text))
         print(f"Segmented into {len(segments)} pasal segments")
     
     # Step 2: Chunk

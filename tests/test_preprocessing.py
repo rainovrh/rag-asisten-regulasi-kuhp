@@ -3,7 +3,7 @@
 import pytest
 from src.preprocessing.cleaner import DocumentCleaner
 from src.preprocessing.normalizer import TextNormalizer
-from src.preprocessing.chunker import SemanticChunker, FixedSizeChunker
+from src.preprocessing.chunker import SemanticChunker, FixedSizeChunker, PasalSegmenter
 
 
 class TestDocumentCleaner:
@@ -118,6 +118,36 @@ class TestTextNormalizer:
         normalizer = TextNormalizer()
         result = normalizer.normalize("UU No. 11 Tahun 2008.")
         assert "no. 11 tahun 2008." in result
+
+
+class TestPasalSegmenter:
+    """Tests for PasalSegmenter."""
+
+    def setup_method(self) -> None:
+        """Set up test fixtures."""
+        self.segmenter = PasalSegmenter(line_anchored=True)
+
+    def test_line_anchored_ignores_inline_cross_references(self) -> None:
+        """Test inline 'dalam Pasal 4' references do not create segments."""
+        text = (
+            "Pasal 4\nPenerapan ketentuan dalam Pasal 2 dan Pasal 3\n"
+            "Pasal 5\nKetentuan lain."
+        )
+        segments = self.segmenter.segment(text)
+        ids = [s for s, _ in segments]
+        assert ids == ["pasal 4", "pasal 5"]
+
+    def test_segment_deduplicates_repeated_headings(self) -> None:
+        """Test duplicate headings yield unique segment ids only once."""
+        text = "Pasal 1\nIsi pertama.\nPasal 1\nIsi kedua."
+        segments = self.segmenter.segment(text)
+        assert len(segments) == 1
+
+    def test_unanchored_mode_keeps_legacy_behavior(self) -> None:
+        """Test default mode still matches inline references (legacy)."""
+        segmenter = PasalSegmenter()
+        segments = segmenter.segment("rujukan dalam Pasal 2 tetap cocok")
+        assert len(segments) == 1
 
 
 class TestSemanticChunker:
