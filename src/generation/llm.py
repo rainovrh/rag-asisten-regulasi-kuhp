@@ -1,9 +1,10 @@
-"""LLM interface for text generation."""
+"""LLM interface for text generation using Groq."""
 
 import re
+import time
 from typing import Optional
 
-from langchain_community.llms import Ollama
+from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 
 from src.utils.logger import get_logger
@@ -17,7 +18,7 @@ class GenerationError(Exception):
 
 
 class LLMEngine:
-    """LLM inference engine using Ollama."""
+    """LLM inference engine using Groq API."""
     
     REFUSAL_PATTERNS = [
         r"saya tidak dapat menemukan pasal yang relevan",
@@ -37,7 +38,7 @@ class LLMEngine:
         """Initialize LLM engine.
         
         Args:
-            model: Ollama model name.
+            model: Groq model name.
             temperature: Sampling temperature.
             max_tokens: Maximum tokens to generate.
         """
@@ -45,32 +46,52 @@ class LLMEngine:
         self.temperature = temperature
         self.max_tokens = max_tokens
         
-        logger.info(f"Initializing LLM: {model}")
-        self._llm = Ollama(model=model, temperature=temperature)
+        logger.info(f"Initializing Groq LLM: {model}")
+        
+        if not settings.groq_api_key:
+            raise ValueError("GROQ_API_KEY is not set in environment variables.")
+            
+        self._llm = ChatGroq(
+            model_name=model, 
+            temperature=temperature,
+            max_tokens=max_tokens,
+            groq_api_key=settings.groq_api_key
+        )
     
     def generate(
         self,
         prompt: str,
         stop_sequences: Optional[list[str]] = None,
+        max_retries: int = 3,
     ) -> str:
-        """Generate text from prompt.
+        """Generate text from prompt with retry on rate limit.
         
         Args:
             prompt: Input prompt.
             stop_sequences: Optional sequences to stop generation.
+            max_retries: Number of retries on rate limit (429).
         
         Returns:
             Generated text.
         
         Raises:
-            GenerationError: If generation fails.
+            GenerationError: If generation fails after retries.
         """
-        try:
-            response = self._llm.invoke(prompt, stop=stop_sequences)
-            return response
-        except Exception as e:
-            logger.error(f"LLM generation failed: {e}")
-            raise GenerationError(f"LLM generation failed: {e}") from e
+        for attempt in range(max_retries):
+            try:
+                response = self._llm.invoke(prompt, stop=stop_sequences)
+                return response.content
+            except Exception as e:
+                error_str = str(e)
+                if "429" in error_str and attempt < max_retries - 1:
+                    wait_time = 5 * (attempt + 1)
+                    logger.warning(f"Rate limit hit. Retrying in {wait_time}s (attempt {attempt+1}/{max_retries})")
+                    time.sleep(wait_time)
+                else:
+                    logger.error(f"LLM generation failed: {e}")
+                    raise GenerationError(f"LLM generation failed: {e}") from e
+        
+        raise GenerationError("Max retries exceeded")
     
     def generate_with_template(
         self,

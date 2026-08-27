@@ -53,7 +53,7 @@ EMBEDDING_DIMENSION = 768  # For indobenchmark/indobert-base-p1
 
 DEFAULT_LLM_MODEL = "openai/gpt-oss-120b"
 DEFAULT_LLM_TEMPERATURE = 0.0
-DEFAULT_LLM_MAX_TOKENS = 512
+DEFAULT_LLM_MAX_TOKENS = 64
 
 # ============================================================================
 # EVALUATION CONSTANTS
