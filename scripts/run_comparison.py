@@ -102,31 +102,31 @@ def main() -> None:
     dataset = GoldenDataset(dataset_path)
     pasal_mapping_path = PROCESSED_DATA_DIR / "pasal_to_chunks.json"
     
-    # Define scenarios
+    # Define scenarios: A=baseline, B=hybrid effect, C=chunking effect, D=full proposed
     scenarios = [
         {
-            "name": "A_Baseline_Murni",
+            "name": "A_Baseline_FixedBM25",
             "chunking": "fixed",
             "retrieval": "bm25",
             "corpus": PROCESSED_DATA_DIR / "kuhp_bersih_fixed.json",
-            "index": INDEXES_DIR / "faiss_index_kuhp",
+            "index": INDEXES_DIR / "faiss_index_kuhp_fixed",
         },
         {
-            "name": "B_Semantik_Tunggal",
+            "name": "B_FixedHybrid",
+            "chunking": "fixed",
+            "retrieval": "hybrid",
+            "corpus": PROCESSED_DATA_DIR / "kuhp_bersih_fixed.json",
+            "index": INDEXES_DIR / "faiss_index_kuhp_fixed",
+        },
+        {
+            "name": "C_SemanticBM25",
             "chunking": "semantic",
-            "retrieval": "dense",
+            "retrieval": "bm25",
             "corpus": PROCESSED_DATA_DIR / "kuhp_bersih.json",
             "index": INDEXES_DIR / "faiss_index_kuhp",
         },
         {
-            "name": "C_Leksikal_Tunggal",
-            "chunking": "fixed",
-            "retrieval": "bm25",
-            "corpus": PROCESSED_DATA_DIR / "kuhp_bersih_fixed.json",
-            "index": INDEXES_DIR / "faiss_index_kuhp",
-        },
-        {
-            "name": "D_Sistem_Usulan",
+            "name": "D_SemanticHybrid",
             "chunking": "semantic",
             "retrieval": "hybrid",
             "corpus": PROCESSED_DATA_DIR / "kuhp_bersih.json",
