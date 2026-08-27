@@ -18,15 +18,20 @@ from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.dense_retriever import DenseRetriever
 from src.generation.llm import LLMEngine
 
-def run_scenario(name, chunking, retrieval, corpus_path, index_path, dataset, pasal_mapping_path, output_dir, limit=None):
-    print(f"\n--- Running Scenario: {name} ---")
+def run_scenario(name, chunking, retrieval, corpus_path, index_path, dataset, pasal_mapping_path, output_dir, limit=None, provider="groq", model=None):
+    print(f"\n--- Running Scenario: {name} (provider: {provider}) ---")
     with open(corpus_path, "r", encoding="utf-8") as f:
         corpus_data = json.load(f)
     
     bm25 = BM25Retriever(corpus_data=corpus_data)
     dense = DenseRetriever(index_path=index_path)
     retriever = HybridRetriever(bm25, dense, use_bm25=(retrieval in ["bm25", "hybrid"]), use_dense=(retrieval in ["dense", "hybrid"]))
-    llm = LLMEngine()
+    
+    kwargs = {"provider": provider}
+    if model:
+        kwargs["model"] = model
+    llm = LLMEngine(**kwargs)
+    
     runner = EvaluationRunner(retriever, llm, dataset, pasal_mapping_path=pasal_mapping_path)
     
     df = runner.run(output_dir / f"{name}_results.csv", limit=limit)
@@ -37,6 +42,8 @@ def main():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=50, help="Number of queries to evaluate")
+    parser.add_argument("--provider", type=str, default="groq", choices=["groq", "ollama"], help="LLM provider")
+    parser.add_argument("--model", type=str, default=None, help="Model name override")
     args = parser.parse_args()
     
     setup_logger("INFO")
@@ -48,14 +55,11 @@ def main():
     
     results = []
     # Baseline
-    results.append(run_scenario("A_Baseline", "fixed", "bm25", PROCESSED_DATA_DIR/"kuhp_bersih_fixed.json", INDEXES_DIR/"faiss_index_kuhp_fixed", dataset, pasal_mapping_path, output_dir, limit=args.limit))
+    results.append(run_scenario("A_Baseline", "fixed", "bm25", PROCESSED_DATA_DIR/"kuhp_bersih_fixed.json", INDEXES_DIR/"faiss_index_kuhp_fixed", dataset, pasal_mapping_path, output_dir, limit=args.limit, provider=args.provider, model=args.model))
     # Proposed
-    results.append(run_scenario("D_Usulan", "semantic", "hybrid", PROCESSED_DATA_DIR/"kuhp_bersih.json", INDEXES_DIR/"faiss_index_kuhp", dataset, pasal_mapping_path, output_dir, limit=args.limit))
+    results.append(run_scenario("D_Usulan", "semantic", "hybrid", PROCESSED_DATA_DIR/"kuhp_bersih.json", INDEXES_DIR/"faiss_index_kuhp", dataset, pasal_mapping_path, output_dir, limit=args.limit, provider=args.provider, model=args.model))
     
     combined = pd.concat(results, ignore_index=True)
     combined.to_csv(output_dir / "core_results.csv", index=False)
     print("\nSummary:")
     print(combined.groupby("Scenario")[["Hit", "First_Relevant_Rank"]].mean())
-
-if __name__ == "__main__":
-    main()
