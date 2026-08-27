@@ -67,12 +67,13 @@ class EvaluationRunner:
         pasal_key = match.group(1).lower()
         return set(self._pasal_mapping.get(pasal_key, []))
     
-    def run(self, output_path: Optional[Path] = None, run_ragas: bool = False) -> pd.DataFrame:
+    def run(self, output_path: Optional[Path] = None, run_ragas: bool = False, limit: Optional[int] = None) -> pd.DataFrame:
         """Run evaluation on all scenarios.
         
         Args:
             output_path: Path to save results CSV.
             run_ragas: Whether to run RAGAS evaluation (Faithfulness, Answer Relevance).
+            limit: Optional max number of queries to evaluate.
         
         Returns:
             DataFrame with evaluation results.
@@ -83,8 +84,14 @@ class EvaluationRunner:
         ground_truths = self.dataset.get_ground_truths()
         contexts = self.dataset.get_contexts()
         
-        results = []
+        if limit is not None and limit < len(queries):
+            queries = queries[:limit]
+            ground_truths = ground_truths[:limit]
+            contexts = contexts[:limit]
         
+        results = []
+        all_retrieved_hits = []
+
         for i, (query, gt, ctx) in enumerate(tqdm(
             zip(queries, ground_truths, contexts),
             total=len(queries),
@@ -94,14 +101,17 @@ class EvaluationRunner:
                 # Retrieve documents
                 retrieved = self.retriever.search(query, top_k=5, apply_crag=True)
                 retrieved_doc_ids = [doc_id for doc_id, _, _ in retrieved]
-                
+
+                # Format hits for metrics calculation (doc_id, score)
+                hits = [(doc_id, score) for doc_id, score, _ in retrieved] if retrieved else []
+
                 # Check hit using pasal reference (ctx), not answer text (gt)
                 expected_chunks = self._get_pasal_chunks(ctx)
                 if expected_chunks:
                     hit = any(doc_id in expected_chunks for doc_id in retrieved_doc_ids)
                 else:
                     hit = ctx in retrieved_doc_ids
-                
+
                 # Find rank of first relevant document
                 first_relevant_rank = None
                 for rank, (doc_id, _, _) in enumerate(retrieved, start=1):
@@ -113,7 +123,7 @@ class EvaluationRunner:
                         if doc_id == ctx:
                             first_relevant_rank = rank
                             break
-                
+
                 # Generate answer
                 if retrieved:
                     context_text = "\n\n".join(
@@ -124,7 +134,8 @@ class EvaluationRunner:
                     answer = self.llm.generate_with_template(prompt, context_text, query)
                 else:
                     answer = "Informasi tidak tersedia di konteks. (Dicegah oleh filter CRAG)"
-                
+
+                all_retrieved_hits.append(hits)
                 results.append({
                     "ID": i + 1,
                     "Query": query,
@@ -137,9 +148,10 @@ class EvaluationRunner:
                     "Hit": hit,
                     "First_Relevant_Rank": first_relevant_rank,
                 })
-                
+
             except Exception as e:
                 logger.error(f"Error evaluating query {i+1}: {e}")
+                all_retrieved_hits.append([])
                 results.append({
                     "ID": i + 1,
                     "Query": query,
@@ -150,20 +162,18 @@ class EvaluationRunner:
                     "Hit": False,
                     "First_Relevant_Rank": None,
                 })
-        
+
         df = pd.DataFrame(results)
-        
+
         # Calculate aggregate metrics
         hit_rate = calculate_hit_rate(
-            [[(doc_id, score) for doc_id, score, _ in r]
-             for r in results],
+            all_retrieved_hits,
             contexts,
             top_k=5,
             pasal_mapping=self._pasal_mapping or None,
         )
         mrr = calculate_mrr(
-            [[(doc_id, score) for doc_id, score, _ in r]
-             for r in results],
+            all_retrieved_hits,
             contexts,
             pasal_mapping=self._pasal_mapping or None,
         )
