@@ -18,6 +18,7 @@ class EvaluationScenario:
     query: str
     context: str
     ground_truth: str
+    target_chunk_id: Optional[str] = None
 
 
 class GoldenDataset:
@@ -64,6 +65,7 @@ class GoldenDataset:
                     query=row["Query"],
                     context=row["Konteks Pasal"],
                     ground_truth=row["Ground Truth"],
+                    target_chunk_id=row.get("Target Chunk ID"),
                 )
                 self.scenarios.append(scenario)
         
@@ -92,6 +94,14 @@ class GoldenDataset:
             List of context strings.
         """
         return [s.context for s in self.scenarios]
+
+    def get_target_chunk_ids(self) -> list[Optional[str]]:
+        """Get all target chunk IDs.
+        
+        Returns:
+            List of target chunk ID strings.
+        """
+        return [s.target_chunk_id for s in self.scenarios]
     
     def __len__(self) -> int:
         """Number of scenarios."""

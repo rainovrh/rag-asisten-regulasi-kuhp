@@ -7,11 +7,14 @@ import sys
 from src.config.settings import settings
 
 
-def setup_logger(log_level: str = "INFO") -> None:
+def setup_logger(log_level: str = "INFO"):
     """Configure application logger with console and file handlers.
     
     Args:
         log_level: Minimum log level (DEBUG, INFO, WARNING, ERROR).
+        
+    Returns:
+        Configured logger instance.
     """
     # Remove default handler
     logger.remove()
@@ -39,6 +42,7 @@ def setup_logger(log_level: str = "INFO") -> None:
     )
     
     logger.info(f"Logger initialized at level {log_level}")
+    return logger
 
 
 def get_logger(name: str):

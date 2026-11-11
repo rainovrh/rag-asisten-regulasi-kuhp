@@ -1,121 +1,163 @@
-"""Dense retrieval using vector similarity search."""
+"""Dense retrieval using FAISS Vector Database with IndoBERT and Cosine Similarity."""
 
 from pathlib import Path
-from typing import Optional
+from typing import Any, List, Optional, Tuple, Union
 
 from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores.utils import DistanceStrategy
 from langchain_core.documents import Document
 
+from src.config.constants import DEFAULT_DENSE_TOP_K
+from src.retrieval.indobert_embedding import IndoBERTEmbedding
 from src.utils.logger import get_logger
 from src.utils.validators import validate_file_path
-from src.config.constants import DEFAULT_EMBEDDING_MODEL, DEFAULT_EMBEDDING_DEVICE
 
 logger = get_logger(__name__)
 
 
-def _create_embedding(model_name: str, device: str):
-    """Create embedding object based on model name.
-    
-    Args:
-        model_name: HuggingFace model name.
-        device: Device to run model on.
-    
-    Returns:
-        LangChain embedding object.
-    """
-    if "indobenchmark/indobert" in model_name.lower():
-        from src.retrieval.indobert_embedding import IndoBERTEmbedding
-        return IndoBERTEmbedding(model_name=model_name, device=device)
-    else:
-        return HuggingFaceEmbeddings(
-            model_name=model_name,
-            model_kwargs={"device": device},
-        )
-
-
 class DenseRetriever:
-    """Dense retrieval using FAISS vector database."""
-    
+    """Dense semantic retrieval using FAISS IndexFlatIP and L2-Normalized IndoBERT."""
+
     def __init__(
         self,
         index_path: Optional[Path] = None,
-        embedding_model: str = DEFAULT_EMBEDDING_MODEL,
-        device: str = DEFAULT_EMBEDDING_DEVICE,
+        embedding: Optional[IndoBERTEmbedding] = None,
+        device: Optional[str] = None,
     ) -> None:
         """Initialize dense retriever.
-        
+
         Args:
-            index_path: Path to FAISS index directory.
-            embedding_model: HuggingFace model name.
-            device: Device to run model on ('cpu' or 'cuda').
-        
-        Raises:
-            FileNotFoundError: If index_path doesn't exist.
+            index_path: Path to serialized FAISS index directory.
+            embedding: Pre-initialized IndoBERTEmbedding instance.
+            device: 'cpu' or 'cuda'.
         """
-        self.embedding_model = embedding_model
         self.device = device
+        self._embedding = embedding or IndoBERTEmbedding(device=device)
         self._vectorstore: Optional[FAISS] = None
-        self._embedding = _create_embedding(embedding_model, device)
-        
+
         if index_path is not None:
             self.load_index(index_path)
-    
-    def load_index(self, index_path: Path) -> None:
-        """Load FAISS index from disk.
-        
+
+    def build_from_chunks(
+        self,
+        chunks: List[dict],
+        batch_size: int = 32,
+    ) -> FAISS:
+        """Build FAISS IndexFlatIP from list of chunk dictionaries.
+
         Args:
-            index_path: Path to FAISS index directory.
-        
-        Raises:
-            FileNotFoundError: If index doesn't exist.
+            chunks: List of chunk dictionaries containing 'id_unik', 'isi_teks', 'metadata'.
+            batch_size: Batch size for embedding computation.
+
+        Returns:
+            Configured FAISS vectorstore.
         """
-        index_path = validate_file_path(index_path, must_exist=True)
-        logger.info(f"Loading FAISS index from {index_path}")
-        
+        logger.info(f"Building FAISS IndexFlatIP for {len(chunks)} legal chunks (batch_size={batch_size})")
+
+        documents: List[Document] = []
+        for c in chunks:
+            chunk_id = c.get("id_unik", "")
+            text = c.get("isi_teks", "")
+            meta = c.get("metadata", {})
+            meta_clean = dict(meta)
+            meta_clean["chunk_id"] = chunk_id
+
+            doc = Document(
+                page_content=text,
+                metadata=meta_clean,
+            )
+            documents.append(doc)
+
+        # Build FAISS with DistanceStrategy.COSINE (IndexFlatIP + L2 normalization)
+        self._vectorstore = FAISS.from_documents(
+            documents=documents,
+            embedding=self._embedding,
+            distance_strategy=DistanceStrategy.COSINE,
+        )
+        logger.info(f"FAISS IndexFlatIP successfully built with {self._vectorstore.index.ntotal} vectors")
+        return self._vectorstore
+
+    def save_index(self, output_dir: Path) -> None:
+        """Persist FAISS index and metadata to disk."""
+        if self._vectorstore is None:
+            raise RuntimeError("Cannot save index: vectorstore is not built or loaded")
+        output_dir = Path(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        self._vectorstore.save_local(str(output_dir))
+        logger.info(f"Saved FAISS index ({self._vectorstore.index.ntotal} vectors) to {output_dir}")
+
+    def load_index(self, index_dir: Path) -> None:
+        """Load persistent FAISS index from disk."""
+        index_dir = validate_file_path(index_dir, must_exist=True)
+        logger.info(f"Loading persistent FAISS index from {index_dir}")
         self._vectorstore = FAISS.load_local(
-            str(index_path),
+            str(index_dir),
             self._embedding,
+            distance_strategy=DistanceStrategy.COSINE,
             allow_dangerous_deserialization=True,
         )
-        logger.info("FAISS index loaded successfully")
-    
-    def search(self, query: str, top_k: int = 10) -> list[tuple[str, float]]:
-        """Search documents using dense retrieval.
-        
+        self._doc_id_map: dict[str, Document] = {}
+        if hasattr(self._vectorstore, "docstore") and hasattr(self._vectorstore.docstore, "_dict"):
+            for doc in self._vectorstore.docstore._dict.values():
+                cid = doc.metadata.get("chunk_id", doc.metadata.get("id_unik", ""))
+                if cid:
+                    self._doc_id_map[cid] = doc
+        logger.info(f"Loaded FAISS index with {self._vectorstore.index.ntotal} vectors (metric={self._vectorstore.index.metric_type})")
+
+    @classmethod
+    def load_from_dir(
+        cls,
+        index_dir: Path,
+        embedding: Optional[IndoBERTEmbedding] = None,
+        device: Optional[str] = None,
+    ) -> "DenseRetriever":
+        """Instantiate and load dense retriever from directory."""
+        retriever = cls(embedding=embedding, device=device)
+        retriever.load_index(index_dir)
+        return retriever
+
+    def get_document(self, doc_id: str) -> str:
+        """Get document text by unique chunk ID."""
+        if hasattr(self, "_doc_id_map") and doc_id in self._doc_id_map:
+            return self._doc_id_map[doc_id].page_content
+        raise KeyError(f"Chunk ID '{doc_id}' not found in FAISS docstore")
+
+    def get_metadata(self, doc_id: str) -> dict:
+        """Get document metadata by unique chunk ID."""
+        if hasattr(self, "_doc_id_map") and doc_id in self._doc_id_map:
+            return self._doc_id_map[doc_id].metadata
+        raise KeyError(f"Chunk ID '{doc_id}' not found in FAISS docstore")
+
+    def search(self, query: str, top_k: int = DEFAULT_DENSE_TOP_K) -> List[Tuple[str, float]]:
+        """Perform semantic similarity search on legal chunks.
+
         Args:
-            query: Search query.
-            top_k: Number of top results to return.
-        
+            query: User inquiry or legal case scenario.
+            top_k: Number of nearest neighbors to retrieve.
+
         Returns:
-            List of (doc_id, score) tuples.
-        
-        Raises:
-            RuntimeError: If index not loaded.
+            List of (chunk_id, similarity_score) tuples sorted descending by relevance.
         """
+        if not query or not query.strip():
+            raise ValueError("Query string cannot be empty")
+
         if self._vectorstore is None:
-            raise RuntimeError("FAISS index not loaded. Call load_index() first.")
-        
+            raise RuntimeError("FAISS vectorstore is not loaded. Call load_index() or build_from_chunks() first.")
+
+        # similarity_search_with_score returns (Document, cosine_similarity_score)
+        # without triggering spurious range warnings on negative cosine values
         results = self._vectorstore.similarity_search_with_score(query, k=top_k)
-        
-        formatted_results = []
+
+        scored_results: List[Tuple[str, float]] = []
         for doc, score in results:
-            doc_id = doc.metadata.get("chunk_id") or doc.metadata.get("pasal", "unknown")
-            formatted_results.append((doc_id, float(score)))
-        
-        return formatted_results
-    
-    def similarity_search(self, query: str, top_k: int = 10) -> list[Document]:
-        """Get raw documents from similarity search.
-        
-        Args:
-            query: Search query.
-            top_k: Number of results.
-        
-        Returns:
-            List of Document objects.
-        """
-        if self._vectorstore is None:
-            raise RuntimeError("FAISS index not loaded. Call load_index() first.")
-        
-        return self._vectorstore.similarity_search(query, k=top_k)
+            chunk_id = doc.metadata.get("chunk_id", doc.metadata.get("id_unik", ""))
+            scored_results.append((chunk_id, float(score)))
+
+        return scored_results
+
+    @property
+    def total_vectors(self) -> int:
+        """Number of vectors currently stored in the FAISS index."""
+        if self._vectorstore is None or self._vectorstore.index is None:
+            return 0
+        return self._vectorstore.index.ntotal

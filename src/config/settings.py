@@ -33,7 +33,8 @@ class Settings(BaseSettings):
     embedding_device: str = "cpu"
     
     # LLM Configuration
-    llm_model: str = "llama3"
+    llm_model: str = "openai/gpt-oss-120b"
+    groq_api_key: str = ""
     llm_temperature: float = 0.0
     llm_max_tokens: int = 512
     
