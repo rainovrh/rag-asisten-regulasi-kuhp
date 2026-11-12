@@ -192,7 +192,6 @@ Golden Dataset (50 scenarios) → Batch Retrieval → LLM Generation → Hit Rat
 ## Kontributor
 
 - **Rainova Rahaniawan** (152023007) - [@rainovrh](https://github.com/rainovrh) - ITENAS 2026
-- **Kilo Code** - AI Assistant
 
 ## License
 
